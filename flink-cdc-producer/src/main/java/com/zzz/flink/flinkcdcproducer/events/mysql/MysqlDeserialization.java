@@ -1,9 +1,8 @@
-package com.zzz.flink.flinkcdcproducer.mysqlevent;
+package com.zzz.flink.flinkcdcproducer.events.mysql;
 
-import com.alibaba.fastjson.JSON;
 import com.ververica.cdc.debezium.DebeziumDeserializationSchema;
+import com.zzz.flink.flinkcdcproducer.datachange.DataChangeInfo;
 import io.debezium.data.Envelope;
-import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.util.Collector;
 import org.apache.kafka.connect.data.Field;
@@ -43,8 +42,8 @@ public class MysqlDeserialization implements DebeziumDeserializationSchema<DataC
         Struct struct = (Struct) sourceRecord.value();
         final Struct source = struct.getStruct(SOURCE);
         DataChangeInfo dataChangeInfo = new DataChangeInfo();
-        dataChangeInfo.setBeforeData(getJsonObject(struct, BEFORE).toJSONString());
-        dataChangeInfo.setAfterData(getJsonObject(struct, AFTER).toJSONString());
+        dataChangeInfo.setBeforeData(getStruct(struct, BEFORE));
+        dataChangeInfo.setAfterData(getStruct(struct, AFTER));
         //5.获取操作类型  CREATE UPDATE DELETE
         Envelope.Operation operation = Envelope.operationFor(sourceRecord);
 //        String type = operation.toString().toUpperCase();
@@ -57,6 +56,10 @@ public class MysqlDeserialization implements DebeziumDeserializationSchema<DataC
         dataChangeInfo.setChangeTime(Optional.ofNullable(struct.get(TS_MS)).map(x -> Long.parseLong(x.toString())).orElseGet(System::currentTimeMillis));
         //7.输出数据
         collector.collect(dataChangeInfo);
+    }
+
+    private Struct getStruct(Struct value, String fieldElement) {
+        return value.getStruct(fieldElement);
     }
 
     /**

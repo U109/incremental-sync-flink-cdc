@@ -1,8 +1,10 @@
-package com.zzz.flink.flinkcdcproducer.mysqlevent;
+package com.zzz.flink.flinkcdcproducer.events.mysql;
 
 import com.ververica.cdc.connectors.mysql.MySqlSource;
 import com.ververica.cdc.connectors.mysql.table.StartupOptions;
 import com.ververica.cdc.debezium.DebeziumSourceFunction;
+import com.zzz.flink.flinkcdcproducer.datachange.DataChangeInfo;
+import com.zzz.flink.flinkcdcproducer.datachange.DataChangeSink;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.springframework.boot.ApplicationArguments;

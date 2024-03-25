@@ -1,6 +1,7 @@
-package com.zzz.flink.flinkcdcproducer.mysqlevent;
+package com.zzz.flink.flinkcdcproducer.datachange;
 
 import lombok.Data;
+import org.apache.kafka.connect.data.Struct;
 
 /**
  * @author zhangzhongzhen wrote on 2024/3/24
@@ -13,11 +14,11 @@ public class DataChangeInfo {
     /**
      * 变更前数据
      */
-    private String beforeData;
+    private Struct beforeData;
     /**
      * 变更后数据
      */
-    private String afterData;
+    private Struct afterData;
     /**
      * 变更类型 1新增 2修改 3删除
      */
