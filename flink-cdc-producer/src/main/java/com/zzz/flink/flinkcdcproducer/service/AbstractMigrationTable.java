@@ -15,6 +15,7 @@ import java.util.stream.IntStream;
 public abstract class AbstractMigrationTable implements MigrationTableService {
     @Override
     public List<MigrationTable> queryAllTable() {
+
         return IntStream.rangeClosed(1, 31) // 使用rangeClosed方法包括上限32
                 .mapToObj(i -> new MigrationTable("table_" + i)) // 将整数转换为MigrationTable对象
                 .collect(Collectors.toCollection(ArrayList::new)); // 收集到ArrayList

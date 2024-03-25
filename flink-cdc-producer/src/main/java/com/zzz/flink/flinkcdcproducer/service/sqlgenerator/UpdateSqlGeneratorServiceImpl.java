@@ -1,12 +1,15 @@
 package com.zzz.flink.flinkcdcproducer.service.sqlgenerator;
 
 import com.zzz.flink.flinkcdcproducer.datachange.DataChangeInfo;
+import com.zzz.flink.flinkcdcproducer.util.JSONObjectUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Zzz
@@ -14,29 +17,28 @@ import java.util.List;
  * @description:
  */
 @Service("UPDATE")
+@Slf4j
 public class UpdateSqlGeneratorServiceImpl extends AbstractSqlGenerator {
 
     @Override
     public String generatorSql(DataChangeInfo dataChangeInfo) {
-        Struct beforeData = dataChangeInfo.getBeforeData();
-        Struct afterData = dataChangeInfo.getAfterData();
-
-        Schema beforeSchema = beforeData.schema();
-        List<Field> beforeFields = beforeSchema.fields();
+        String beforeData = dataChangeInfo.getBeforeData();
+        String afterData = dataChangeInfo.getAfterData();
+        Map<String, Object> beforeDataMap = JSONObjectUtils.JsonToMap(beforeData);
+        Map<String, Object> afterDataMap = JSONObjectUtils.JsonToMap(afterData);
 
         StringBuilder updateSetPart = new StringBuilder();
         StringBuilder wherePart = new StringBuilder();
-
-        for (Field field : beforeFields) {
-            Object beforeValue = beforeData.get(field);
-            Object afterValue = afterData.get(field);
+        for (String key : beforeDataMap.keySet()) {
+            Object beforeValue = beforeDataMap.get(key);
+            Object afterValue = afterDataMap.get(key);
             if (!beforeValue.equals(afterValue)) {
                 // 如果字段值发生变化，则将其加入到更新列表
                 if (updateSetPart.length() > 0) {
                     // 不是第一个更改的字段，增加逗号分隔
                     updateSetPart.append(", ");
                 }
-                updateSetPart.append(quoteIdentifier(field.name()))
+                updateSetPart.append(quoteIdentifier(key))
                         .append(" = ")
                         .append(formatValue(afterValue));
             } else {
@@ -44,11 +46,13 @@ public class UpdateSqlGeneratorServiceImpl extends AbstractSqlGenerator {
                     // 不是第一个更改的字段，增加逗号分隔
                     wherePart.append(", ");
                 }
-                wherePart.append(quoteIdentifier(field.name()))
+                wherePart.append(quoteIdentifier(key))
                         .append(" = ")
                         .append(formatValue(beforeValue));
             }
         }
+        log.info("updateSetPart : {}", updateSetPart);
+        log.info("wherePart : {}", wherePart);
         // 构建完整 SQL
         return "UPDATE " + quoteIdentifier(dataChangeInfo.getTableName())
                 + " SET " + updateSetPart

@@ -1,12 +1,17 @@
 package com.zzz.flink.flinkcdcproducer.service.sqlgenerator;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.zzz.flink.flinkcdcproducer.datachange.DataChangeInfo;
+import com.zzz.flink.flinkcdcproducer.util.JSONObjectUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 /**
@@ -15,24 +20,23 @@ import java.util.StringJoiner;
  * @description:
  */
 @Service("DELETE")
+@Slf4j
 public class DeleteSqlGeneratorServiceImpl extends AbstractSqlGenerator {
 
     @Override
     public String generatorSql(DataChangeInfo dataChangeInfo) {
-        Struct beforeData = dataChangeInfo.getBeforeData();
-        Schema beforeSchema = beforeData.schema();
-
-        List<Field> beforeFields = beforeSchema.fields();
-
+        String beforeData = dataChangeInfo.getBeforeData();
+        Map<String, Object> beforeDataMap = JSONObjectUtils.JsonToMap(beforeData);
         StringBuilder wherePart = new StringBuilder();
-        for (Field field : beforeFields) {
-            Object beforeValue = beforeData.get(field);
+        for (String key : beforeDataMap.keySet()) {
+            Object beforeValue = beforeDataMap.get(key);
             if (wherePart.length() > 0) {
                 // 不是第一个更改的字段，增加逗号分隔
                 wherePart.append(", ");
             }
-            wherePart.append(quoteIdentifier(field.name())).append(" = ").append(formatValue(beforeValue));
+            wherePart.append(quoteIdentifier(key)).append(" = ").append(formatValue(beforeValue));
         }
+        log.info("wherePart : {}", wherePart);
         return "DELETE FROM " + dataChangeInfo.getTableName() + " WHERE " + wherePart;
     }
 }

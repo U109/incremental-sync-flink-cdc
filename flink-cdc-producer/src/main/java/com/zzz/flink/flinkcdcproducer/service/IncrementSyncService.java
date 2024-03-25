@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface IncrementSyncService {
 
-    boolean generatorQueues(String exchangeName, List<MigrationTable> migrationTables);
+    void generatorQueues(String exchangeName, List<MigrationTable> migrationTables);
 
 }

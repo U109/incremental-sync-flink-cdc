@@ -42,8 +42,8 @@ public class MysqlDeserialization implements DebeziumDeserializationSchema<DataC
         Struct struct = (Struct) sourceRecord.value();
         final Struct source = struct.getStruct(SOURCE);
         DataChangeInfo dataChangeInfo = new DataChangeInfo();
-        dataChangeInfo.setBeforeData(getStruct(struct, BEFORE));
-        dataChangeInfo.setAfterData(getStruct(struct, AFTER));
+        dataChangeInfo.setBeforeData(getJsonObject(struct, BEFORE).toJSONString());
+        dataChangeInfo.setAfterData(getJsonObject(struct, AFTER).toJSONString());
         //5.获取操作类型  CREATE UPDATE DELETE
         Envelope.Operation operation = Envelope.operationFor(sourceRecord);
 //        String type = operation.toString().toUpperCase();

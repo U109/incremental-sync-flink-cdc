@@ -19,12 +19,6 @@ public abstract class AbstractSqlGenerator implements SqlGeneratorService {
         return null;
     }
 
-    public String getColumnName(int columnIndex) {
-        // 根据列索引获取列名的逻辑
-        // 这里简化处理，实际可能需要根据场景获取真实的列名
-        return "column" + columnIndex;
-    }
-
     public String quoteIdentifier(String identifier) {
         // 对字段名进行转义处理，这里简化为对其加反引号
         // 实际应该处理数据库标识符的特殊字符
