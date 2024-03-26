@@ -9,6 +9,7 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,10 @@ public class DeleteSqlGeneratorServiceImpl extends AbstractSqlGenerator {
         StringBuilder wherePart = new StringBuilder();
         for (String key : beforeDataMap.keySet()) {
             Object beforeValue = beforeDataMap.get(key);
+            if ("create_time".equals(key)){
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                beforeValue = dateFormat.format(beforeValue);
+            }
             if (wherePart.length() > 0) {
                 // 不是第一个更改的字段，增加逗号分隔
                 wherePart.append(", ");

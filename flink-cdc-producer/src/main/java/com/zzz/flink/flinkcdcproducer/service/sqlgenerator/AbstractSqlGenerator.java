@@ -6,6 +6,7 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.data.Field;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public abstract class AbstractSqlGenerator implements SqlGeneratorService {
             return "'" + ((String) value).replace("'", "''") + "'";
         } else if (value instanceof Number) {
             return value.toString();
-        } else {
+        }else {
             return value.toString();
         }
     }

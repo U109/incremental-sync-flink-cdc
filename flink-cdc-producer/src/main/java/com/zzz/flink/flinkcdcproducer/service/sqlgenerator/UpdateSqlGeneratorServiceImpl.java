@@ -8,6 +8,7 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,15 @@ public class UpdateSqlGeneratorServiceImpl extends AbstractSqlGenerator {
         for (String key : beforeDataMap.keySet()) {
             Object beforeValue = beforeDataMap.get(key);
             Object afterValue = afterDataMap.get(key);
+
+            if ("create_time".equals(key)){
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                beforeValue = dateFormat.format(beforeValue);
+            }
+            if ("create_time".equals(key)){
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                afterValue = dateFormat.format(afterValue);
+            }
             if (!beforeValue.equals(afterValue)) {
                 // 如果字段值发生变化，则将其加入到更新列表
                 if (updateSetPart.length() > 0) {

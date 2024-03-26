@@ -1,11 +1,11 @@
 server:
-  port: 9001
+  port: 9005
 spring:
   datasource:
-    url: jdbc:mysql://117.72.32.234:3306/flink-cdc-consumer?useSSL=false&useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/flink-cdc-producer?useSSL=false&useUnicode=true&characterEncoding=utf8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: Zz24270507..
+    password: '0507'
 
   rabbitmq:
     username: zzz
@@ -19,6 +19,12 @@ spring:
         acknowledge-mode: manual
       direct:
         acknowledge-mode: manual
+        retry:
+          enabled: true # 开启消费者失败重试
+          initial-interval: 1000ms # 初识的失败等待时长为1秒
+          multiplier: 1 # 失败的等待时长倍数，下次等待时长 = multiplier * last-interval
+          max-attempts: 3 # 最大重试次数
+          stateless: true # true无状态；false有状态。如果业务中包含事务，这里改为false
 
 
 logging:

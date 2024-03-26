@@ -50,7 +50,6 @@ public class IncrementSyncServiceImpl implements IncrementSyncService {
 
         int batchCount = (int) Math.ceil((double) migrationTables.size() / BATCH_SIZE);
 
-
         Map<String, Object> message = new HashMap<>();
         message.put("exchange", exchangeName);
         message.put("all_queue", new ArrayList<>());
