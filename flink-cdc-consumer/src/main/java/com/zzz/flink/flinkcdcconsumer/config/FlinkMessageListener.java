@@ -35,12 +35,8 @@ public class FlinkMessageListener implements MessageListener {
         String payload = new String(message.getBody());
         // 处理消息
         log.info("Received message: {}", payload);
-        try {
-            jdbcTemplate.execute(payload);
-            log.info("success insert");
-        } catch (Exception e) {
-            throw e;
-        }
+        jdbcTemplate.execute(payload);
+        log.info("success insert");
     }
 
 }
